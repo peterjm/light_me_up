@@ -18,12 +18,13 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = "https://github.com/peterjm/light_me_up"
   spec.metadata["changelog_uri"] = "https://github.com/peterjm/light_me_up/CHANGELOG.md"
 
-  spec.files = [
-    "lib/light_me_up/version.rb",
-    "lib/light_me_up.rb",
-  ]
-  spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+  spec.files = Dir.chdir(File.expand_path(__dir__)) do
+    `git ls-files -z`.split("\x0").reject do |f|
+      (f == __FILE__) || f.match(%r{\A(?:(?:test|spec|features)/|\.(?:git|travis|circleci)|appveyor)})
+    end
+  end
+  spec.executables = ["light-me-up"]
+  spec.test_files = spec.files.grep(%r{\Atest/})
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
