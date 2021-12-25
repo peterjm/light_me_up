@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/light_me_up"
+
+parser = LightMeUp::OptionParser.new(
+  program_name: File.basename(__FILE__),
+  starting_options: {
+    ip_address: ENV["ELGATO_IP_ADDRESS"],
+  },
+  default_settings: {
+    brightness: ENV["ELGATO_DEFAULT_BRIGHTNESS"].to_i,
+    temperature: ENV["ELGATO_DEFAULT_TEMPERATURE"].to_i,
+  }
+)
+
+options = parser.parse(ARGV)
+api_client = LightMeUp::ApiClient.new(ip_address: options[:ip_address])
+success = LightMeUp::SettingsUpdate.new(api_client, options, parser.help_message).perform
+exit 1 unless success
