@@ -5,8 +5,8 @@ module LightMeUp
   class ApiClient
     DEFAULT_PORT = 9123
     LIGHTS_PATH = "/elgato/lights"
-    OPEN_TIMEOUT = 1 # seconds
-    READ_TIMEOUT = 1 # seconds
+    OPEN_TIMEOUT = 2 # seconds
+    READ_TIMEOUT = 2 # seconds
 
     def initialize(ip_address:, port: DEFAULT_PORT)
       raise Error, "No ip_address specified." unless ip_address && ip_address != ""
