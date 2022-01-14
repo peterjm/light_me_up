@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LightMeUp
   class Light
     attr_reader :on, :brightness, :temperature

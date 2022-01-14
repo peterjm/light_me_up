@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LightMeUp
   class SettingsUpdate
     attr_reader :api_client, :options
