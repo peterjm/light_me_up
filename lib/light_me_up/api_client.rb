@@ -33,24 +33,24 @@ module LightMeUp
       end
     end
 
-    def set(on: nil, brightness: nil, temperature: nil)
+    def update(on: nil, brightness: nil, temperature: nil)
       update_light(Light.new(on: on, brightness: brightness, temperature: temperature))
     end
 
     def turn_light_on
-      set(on: true)
+      update(on: true)
     end
 
     def turn_light_off
-      set(on: false)
+      update(on: false)
     end
 
-    def set_brightness(brightness)
-      set(brightness: brightness)
+    def update_brightness(brightness)
+      update(brightness: brightness)
     end
 
-    def set_temperature(temperature)
-      set(temperature: temperature)
+    def update_temperature(temperature)
+      update(temperature: temperature)
     end
 
     private
