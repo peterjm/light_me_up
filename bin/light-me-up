@@ -42,7 +42,7 @@ begin
   LightMeUp::SettingsUpdate.new(api_client, options).perform
 rescue LightMeUp::SettingsUpdate::ToggleIncompatible => e
   Optimist.die :toggle, e.message
-rescue LightMeUp::NoOptionsGiven
+rescue LightMeUp::SettingsUpdate::NoOptionsGiven
   Optimist.educate
 rescue LightMeUp::Error => e
   warn e.message

@@ -17,9 +17,7 @@ module LightMeUp
         raise ToggleIncompatible, "is not compatible with setting other options" if settings_options.any?
 
         api_client.toggle
-      end
-
-      if settings_options.any?
+      elsif settings_options.any?
         api_client.set(**settings_options)
       else
         raise NoOptionsGiven, "provide at least one option"
