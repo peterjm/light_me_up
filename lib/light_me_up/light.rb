@@ -4,8 +4,8 @@ module LightMeUp
   class Light
     attr_reader :on, :brightness, :temperature
 
-    BRIGHTNESS_RANGE = (0..100)
-    TEMPERATURE_RANGE = (143..344)
+    BRIGHTNESS_RANGE = (0..100).freeze
+    TEMPERATURE_RANGE = (143..344).freeze
 
     class << self
       def max_brightness
@@ -47,6 +47,7 @@ module LightMeUp
     def validate_range(value, range, name)
       return if value.nil?
       return if range.include?(value)
+
       raise Error, "#{name} must be between #{range.first} and #{range.last}"
     end
   end

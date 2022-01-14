@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 module LightMeUp
   class LightSerializer
     class << self
       def serialize(light)
         on_as_int = if light.on.nil?
-          nil
-        else
-          light.on ? 1 : 0
-        end
+                      nil
+                    else
+                      light.on ? 1 : 0
+                    end
 
         {
           on: on_as_int,
@@ -20,7 +22,7 @@ module LightMeUp
           Light.new(
             on: light["on"] == 1,
             brightness: light["brightness"],
-            temperature: light["temperature"],
+            temperature: light["temperature"]
           )
         end
       end

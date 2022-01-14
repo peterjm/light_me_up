@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'net/http'
-require 'json'
+require "net/http"
+require "json"
 
 module LightMeUp
-  class ApiClient
+  class ApiClient # rubocop:disable Metrics/ClassLength
     DEFAULT_PORT = 9123
     LIGHTS_PATH = "/elgato/lights"
     OPEN_TIMEOUT = 2 # seconds
@@ -12,6 +12,7 @@ module LightMeUp
 
     def initialize(ip_address:, port: DEFAULT_PORT)
       raise Error, "No ip_address specified." unless ip_address && ip_address != ""
+
       @ip_address = ip_address
       @port = port
     end
@@ -22,7 +23,7 @@ module LightMeUp
     end
 
     def toggle
-      with_connection do |http|
+      with_connection do |_http|
         current_status = status
 
         if current_status.on
@@ -69,7 +70,7 @@ module LightMeUp
     def build_light_configuration_data(lights)
       {
         numberOfLights: lights.size,
-        lights: lights.map { |l| LightSerializer.serialize(l) }
+        lights: lights.map { |l| LightSerializer.serialize(l) },
       }
     end
 
@@ -110,7 +111,7 @@ module LightMeUp
 
     def perform_request_with_connection(method, uri, &block)
       request = build_request(method, uri)
-      request['Content-Type'] = "application/json"
+      request["Content-Type"] = "application/json"
       block.call(request) if block_given?
       response = connection.request(request)
 
@@ -120,7 +121,6 @@ module LightMeUp
       else
         raise Error, response.body
       end
-
     end
 
     def build_request(method, uri)

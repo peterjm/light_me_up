@@ -19,9 +19,7 @@ module LightMeUp
         api_client.toggle
       end
 
-      if settings_options.any?
-        api_client.set(**settings_options)
-      end
+      api_client.set(**settings_options) if settings_options.any?
 
       raise NoOptionsGiven, "provide at least one option"
     end

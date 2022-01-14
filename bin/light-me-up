@@ -2,28 +2,39 @@
 # frozen_string_literal: true
 
 require_relative "../lib/light_me_up"
-require 'optimist'
+require "optimist"
 
-brightness_range = [LightMeUp::Light.min_brightness, LightMeUp::Light.max_brightness]
-temperature_range = [LightMeUp::Light.min_temperature, LightMeUp::Light.max_temperature]
+brightness_help = format(
+  "Set the brightness (%<min>d to %<max>d)",
+  min: LightMeUp::Light.min_brightness,
+  max: LightMeUp::Light.max_brightness
+)
+temperature_help = format(
+  "Set the temperature (%<min>d to %<max>d)",
+  min: LightMeUp::Light.min_temperature,
+  max: LightMeUp::Light.max_temperature
+)
+
 options = Optimist.options do
-  banner "Usage: #{$0} [options]"
+  banner "Usage: #{$PROGRAM_NAME} [options]"
 
   opt :toggle, "Toggle whether the lights are on or off", short: "T"
   opt :on, "Turn the light on"
   opt :off, "Turn the light off", short: "O"
-  opt :ip_address, "Specify the IP address", type: :string, :default => ENV["ELGATO_IP_ADDRESS"]
+  opt :ip_address, "Specify the IP address", type: :string, default: ENV["ELGATO_IP_ADDRESS"]
   opt :defaults, "Set to default values"
-  opt :brightness, "Set the brightness (%d to %d)" % brightness_range, type: :integer
-  opt :temperature, "Set the temperature (%d to %d)" % temperature_range, type: :integer
+  opt :brightness, brightness_help, type: :integer
+  opt :temperature, temperature_help, type: :integer
 end
 
-options = options.select { |k,v| v }
+options = options.select { |_k, v| v }
 options[:on] = false if options.delete(:off)
-options.reverse_merge!(
-  brightness: ENV["ELGATO_DEFAULT_BRIGHTNESS"].to_i,
-  temperature: ENV["ELGATO_DEFAULT_TEMPERATURE"].to_i,
-) if options.delete(:defaults)
+if options.delete(:defaults)
+  options.reverse_merge!(
+    brightness: ENV["ELGATO_DEFAULT_BRIGHTNESS"].to_i,
+    temperature: ENV["ELGATO_DEFAULT_TEMPERATURE"].to_i
+  )
+end
 
 api_client = LightMeUp::ApiClient.new(ip_address: options[:ip_address])
 
@@ -34,6 +45,6 @@ rescue LightMeUp::SettingsUpdate::ToggleIncompatible => e
 rescue LightMeUp::NoOptionsGiven
   Optimist.educate
 rescue LightMeUp::Error => e
-  STDERR.puts e.message
+  warn e.message
   exit 1
 end
