@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    light_me_up (0.2.0)
+    light_me_up (0.2.1)
       optimist (~> 3.0)
 
 GEM
