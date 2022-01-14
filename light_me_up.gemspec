@@ -27,6 +27,5 @@ Gem::Specification.new do |spec|
   spec.test_files = spec.files.grep(%r{\Atest/})
   spec.require_paths = ["lib"]
 
-  # Uncomment to register a new dependency of your gem
-  # spec.add_dependency "example-gem", "~> 1.0"
+  spec.add_dependency "optimist", "~> 3.0"
 end

@@ -1,42 +1,27 @@
 module LightMeUp
   class SettingsUpdate
-    attr_reader :api_client, :options, :help_message, :output_stream, :error_output_stream
+    attr_reader :api_client, :options
 
-    def initialize(api_client, options, help_message, output_stream=STDOUT, error_output_stream=STDERR)
+    class ToggleIncompatible < Error; end
+    class NoOptionsGiven < Error; end
+
+    def initialize(api_client, options)
       @api_client = api_client
       @options = options
-      @help_message = help_message
-      @output_stream = output_stream
-      @error_output_stream = error_output_stream
     end
 
     def perform
-      if options[:help]
-        puts help_message
-        return true
-      end
-
       if options[:toggle]
-        if settings_options.any?
-          error_output_stream.puts "Toggle is not compatible with setting other options."
-          output_stream.puts help_message
-          return false
-        end
+        raise ToggleIncompatible, "is not compatible with setting other options" if settings_options.any?
 
         api_client.toggle
-        return true
       end
 
       if settings_options.any?
         api_client.set(**settings_options)
-        return true
       end
 
-      output_stream.puts help_message
-      return false
-    rescue LightMeUp::Error => e
-      error_output_stream.puts e.message
-      return false
+      raise NoOptionsGiven, "provide at least one option"
     end
 
     private

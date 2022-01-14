@@ -1,19 +1,38 @@
 #!/usr/bin/env ruby
 
 require_relative "../lib/light_me_up"
+require 'optimist'
 
-parser = LightMeUp::OptionParser.new(
-  program_name: File.basename(__FILE__),
-  starting_options: {
-    ip_address: ENV["ELGATO_IP_ADDRESS"],
-  },
-  default_settings: {
-    brightness: ENV["ELGATO_DEFAULT_BRIGHTNESS"].to_i,
-    temperature: ENV["ELGATO_DEFAULT_TEMPERATURE"].to_i,
-  }
-)
+brightness_range = [LightMeUp::Light.min_brightness, LightMeUp::Light.max_brightness]
+temperature_range = [LightMeUp::Light.min_temperature, LightMeUp::Light.max_temperature]
+options = Optimist.options do
+  banner "Usage: #{$0} [options]"
 
-options = parser.parse(ARGV)
+  opt :toggle, "Toggle whether the lights are on or off", short: "T"
+  opt :on, "Turn the light on"
+  opt :off, "Turn the light off", short: "O"
+  opt :ip_address, "Specify the IP address", type: :string, :default => ENV["ELGATO_IP_ADDRESS"]
+  opt :defaults, "Set to default values"
+  opt :brightness, "Set the brightness (%d to %d)" % brightness_range, type: :integer
+  opt :temperature, "Set the temperature (%d to %d)" % temperature_range, type: :integer
+end
+
+options = options.select { |k,v| v }
+options[:on] = false if options.delete(:off)
+options.reverse_merge!(
+  brightness: ENV["ELGATO_DEFAULT_BRIGHTNESS"].to_i,
+  temperature: ENV["ELGATO_DEFAULT_TEMPERATURE"].to_i,
+) if options.delete(:defaults)
+
 api_client = LightMeUp::ApiClient.new(ip_address: options[:ip_address])
-success = LightMeUp::SettingsUpdate.new(api_client, options, parser.help_message).perform
-exit 1 unless success
+
+begin
+  LightMeUp::SettingsUpdate.new(api_client, options).perform
+rescue LightMeUp::SettingsUpdate::ToggleIncompatible => e
+  Optimist.die :toggle, e.message
+rescue LightMeUp::NoOptionsGiven
+  Optimist.educate
+rescue LightMeUp::Error => e
+  STDERR.puts e.message
+  exit 1
+end

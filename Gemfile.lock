@@ -1,13 +1,15 @@
 PATH
   remote: .
   specs:
-    light_me_up (0.1.0)
+    light_me_up (0.1.1)
+      optimist (~> 3.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
     minitest (5.15.0)
+    optimist (3.0.1)
     parallel (1.21.0)
     parser (3.0.3.2)
       ast (~> 2.4.1)
