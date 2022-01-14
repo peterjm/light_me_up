@@ -12,7 +12,7 @@ module LightMeUp
 
     def perform
       if options[:help]
-        puts parser.help_message
+        puts help_message
         return true
       end
 
