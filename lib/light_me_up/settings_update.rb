@@ -18,7 +18,7 @@ module LightMeUp
 
         api_client.toggle
       elsif settings_options.any?
-        api_client.set(**settings_options)
+        api_client.update(**settings_options)
       else
         raise NoOptionsGiven, "provide at least one option"
       end
