@@ -30,10 +30,10 @@ end
 options = options.select { |_k, v| v }
 options[:on] = false if options.delete(:off)
 if options.delete(:defaults)
-  options.reverse_merge!(
+  options = {
     brightness: ENV["ELGATO_DEFAULT_BRIGHTNESS"].to_i,
     temperature: ENV["ELGATO_DEFAULT_TEMPERATURE"].to_i
-  )
+  }.merge(options)
 end
 
 api_client = LightMeUp::ApiClient.new(ip_address: options[:ip_address])
