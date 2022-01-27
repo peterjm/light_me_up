@@ -5,7 +5,7 @@ module LightMeUp
     attr_reader :api_client, :options
 
     class ToggleIncompatible < Error; end
-    class NoOptionsGiven < Error; end
+    class InvalidOptions < Error; end
 
     def initialize(api_client, options)
       @api_client = api_client
@@ -20,7 +20,7 @@ module LightMeUp
       elsif settings_options.any?
         api_client.update(**settings_options)
       else
-        raise NoOptionsGiven, "provide at least one option"
+        raise InvalidOptions, "At least one option must be provided"
       end
     end
 
