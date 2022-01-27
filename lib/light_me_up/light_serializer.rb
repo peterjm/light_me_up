@@ -13,7 +13,7 @@ module LightMeUp
         {
           on: on_as_int,
           brightness: light.brightness,
-          temperature: light.temperature,
+          temperature: to_api_temperature(light.temperature),
         }.compact
       end
 
@@ -22,9 +22,24 @@ module LightMeUp
           Light.new(
             on: light["on"] == 1,
             brightness: light["brightness"],
-            temperature: light["temperature"]
+            temperature: to_readable_temperature(light["temperature"])
           )
         end
+      end
+
+      private
+
+      def to_readable_temperature(api_temperature)
+        scale_value(api_temperature, ApiClient::TEMPERATURE_RANGE, Light::TEMPERATURE_RANGE)
+      end
+
+      def to_api_temperature(readable_temperature)
+        scale_value(readable_temperature, Light::TEMPERATURE_RANGE, ApiClient::TEMPERATURE_RANGE)
+      end
+
+      def scale_value(value, src_range, dest_range)
+        scale_ratio = dest_range.size.to_f / src_range.size.to_f
+        (dest_range.min + scale_ratio * (value - src_range.min)).round
       end
     end
   end

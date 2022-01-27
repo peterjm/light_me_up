@@ -5,7 +5,7 @@ module LightMeUp
     attr_reader :on, :brightness, :temperature
 
     BRIGHTNESS_RANGE = (0..100).freeze
-    TEMPERATURE_RANGE = (143..344).freeze
+    TEMPERATURE_RANGE = (0..100).freeze
 
     class << self
       def max_brightness

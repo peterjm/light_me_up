@@ -10,6 +10,8 @@ module LightMeUp
     OPEN_TIMEOUT = 2 # seconds
     READ_TIMEOUT = 2 # seconds
 
+    TEMPERATURE_RANGE = (143..344).freeze
+
     def initialize(ip_address:, port: DEFAULT_PORT)
       raise Error, "No ip_address specified." unless ip_address && ip_address != ""
 
