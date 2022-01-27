@@ -13,21 +13,16 @@ module LightMeUp
     end
 
     def perform
-      if options[:toggle]
-        raise ToggleIncompatible, "is not compatible with setting other options" if settings_options.any?
+      settings_options = options.slice(:toggle, :on, :brightness, :temperature)
+      if settings_options.delete(:toggle)
+        raise ToggleIncompatible, "is not compatible with on or off" if settings_options.key?(:on)
 
-        api_client.toggle
+        api_client.toggle(**settings_options)
       elsif settings_options.any?
         api_client.update(**settings_options)
       else
         raise InvalidOptions, "At least one option must be provided"
       end
-    end
-
-    private
-
-    def settings_options
-      @settings_options ||= options.slice(:on, :brightness, :temperature)
     end
   end
 end

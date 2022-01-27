@@ -22,14 +22,14 @@ module LightMeUp
       LightSerializer.deserialize(response).first
     end
 
-    def toggle
+    def toggle(brightness: nil, temperature: nil)
       with_connection do |_http|
         current_status = status
 
         if current_status.on
-          turn_light_off
+          update(on: false, brightness: brightness, temperature: temperature)
         else
-          turn_light_on
+          update(on: true, brightness: brightness, temperature: temperature)
         end
       end
     end
