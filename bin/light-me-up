@@ -17,6 +17,7 @@ temperature_help = format(
 
 options = Optimist.options do
   banner "Usage: #{$PROGRAM_NAME} [options]"
+  version "light-me-up #{LightMeUp::VERSION}"
 
   opt :toggle, "Toggle whether the lights are on or off", short: "T"
   opt :on, "Turn the light on"
@@ -25,6 +26,7 @@ options = Optimist.options do
   opt :defaults, "Set to default values"
   opt :brightness, brightness_help, type: :integer
   opt :temperature, temperature_help, type: :integer
+  opt :version, "Print version number and exit"
 end
 
 options = options.select { |_k, v| v }
