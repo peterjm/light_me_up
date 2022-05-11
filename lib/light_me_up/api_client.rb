@@ -9,14 +9,16 @@ module LightMeUp
     LIGHTS_PATH = "/elgato/lights"
     OPEN_TIMEOUT = 2 # seconds
     READ_TIMEOUT = 2 # seconds
+    MAX_RETRIES = 2
 
     TEMPERATURE_RANGE = (143..344).freeze
 
-    def initialize(ip_address:, port: DEFAULT_PORT)
+    def initialize(ip_address:, retries: MAX_RETRIES, port: DEFAULT_PORT)
       raise Error, "No ip_address specified." unless ip_address && ip_address != ""
 
       @ip_address = ip_address
       @port = port
+      @max_retries = retries
     end
 
     def status
@@ -58,7 +60,7 @@ module LightMeUp
 
     private
 
-    attr_reader :ip_address, :port, :connection
+    attr_reader :ip_address, :port, :connection, :max_retries
 
     def lights_uri
       URI::HTTP.build(host: ip_address, port: port, path: LIGHTS_PATH)
@@ -90,13 +92,25 @@ module LightMeUp
       !!@connection
     end
 
-    def with_connection
+    def with_connection(&block)
+      retries = 0
+      begin
+        start_connection(&block)
+      rescue Errno::EHOSTDOWN
+        raise Error, "Couldn't connect to lights."
+      rescue Net::OpenTimeout
+        raise Error, "Timeout connecting to lights." if retries >= max_retries
+
+        retries += 1
+        retry
+      end
+    end
+
+    def start_connection
       Net::HTTP.start(ip_address, port, open_timeout: OPEN_TIMEOUT, read_timeout: READ_TIMEOUT) do |connection|
         @connection = connection
         yield
       end
-    rescue Errno::EHOSTDOWN, Net::OpenTimeout
-      raise Error, "Couldn't connect to lights."
     ensure
       @connection = nil
     end
