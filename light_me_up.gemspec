@@ -28,5 +28,5 @@ Gem::Specification.new do |spec|
   spec.test_files = spec.files.grep(%r{\Atest/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "optimist"
+  spec.add_dependency "optimist", "~> 3.0"
 end
