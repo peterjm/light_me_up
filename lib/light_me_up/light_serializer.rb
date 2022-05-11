@@ -40,8 +40,8 @@ module LightMeUp
       def scale_value(value, src_range, dest_range)
         return nil unless value
 
-        scale_ratio = dest_range.size.to_f / src_range.size.to_f
-        (dest_range.min + scale_ratio * (value - src_range.min)).round
+        scale_ratio = dest_range.size.to_f / src_range.size
+        (dest_range.min + (scale_ratio * (value - src_range.min))).round
       end
     end
   end
