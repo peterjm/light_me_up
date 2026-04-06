@@ -22,11 +22,13 @@ module LightMeUp
 
     def test_accepts_minimum_brightness
       light = LightMeUp::Light.new(brightness: 0)
+
       assert_equal 0, light.brightness
     end
 
     def test_accepts_maximum_brightness
       light = LightMeUp::Light.new(brightness: 100)
+
       assert_equal 100, light.brightness
     end
 
@@ -46,11 +48,13 @@ module LightMeUp
 
     def test_accepts_minimum_temperature
       light = LightMeUp::Light.new(temperature: 0)
+
       assert_equal 0, light.temperature
     end
 
     def test_accepts_maximum_temperature
       light = LightMeUp::Light.new(temperature: 100)
+
       assert_equal 100, light.temperature
     end
 

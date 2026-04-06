@@ -1,17 +1,15 @@
+plugins:
+  - rubocop-minitest
+  - rubocop-rake
+
 AllCops:
-  TargetRubyVersion: 2.6
   NewCops: enable
 
 Style/StringLiterals:
-  Enabled: true
   EnforcedStyle: double_quotes
 
 Style/StringLiteralsInInterpolation:
-  Enabled: true
   EnforcedStyle: double_quotes
-
-Layout/LineLength:
-  Max: 120
 
 Style/Documentation:
   Enabled: false
@@ -20,4 +18,19 @@ Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
 Layout/MultilineAssignmentLayout:
+  Enabled: true
   EnforcedStyle: same_line
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Metrics/ClassLength:
+  Exclude:
+    - "test/**/*"
+
+Metrics/MethodLength:
+  Exclude:
+    - "test/**/*"
+
+Minitest/MultipleAssertions:
+  Max: 5

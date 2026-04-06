@@ -70,6 +70,7 @@ module LightMeUp
 
       assert_equal 1, lights.size
       light = lights.first
+
       assert light.on
       assert_equal 75, light.brightness
       assert_equal 0, light.temperature

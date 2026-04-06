@@ -109,26 +109,8 @@ module LightMeUp
 
     def build_client(get_response: nil, put_response: nil, error: nil, retries: 0)
       client = LightMeUp::ApiClient.new(ip_address: "192.168.1.100", retries: retries)
-
-      responses = []
-      responses << [:get, get_response] if get_response
-      responses << [:put, put_response] if put_response
-
-      stub_http = Object.new
-      if error
-        total_attempts = retries + 1
-        attempt = 0
-        stub_http.define_singleton_method(:request) do |_req|
-          attempt += 1
-          raise error if attempt <= total_attempts
-        end
-      else
-        response_queue = responses.dup
-        stub_http.define_singleton_method(:request) do |_req|
-          _, resp = response_queue.shift
-          resp
-        end
-      end
+      stub_http = build_stub_http(get_response: get_response, put_response: put_response, error: error,
+                                  retries: retries)
 
       client.define_singleton_method(:start_connection) do |&block|
         @connection = stub_http
@@ -138,6 +120,28 @@ module LightMeUp
       end
 
       client
+    end
+
+    def build_stub_http(get_response: nil, put_response: nil, error: nil, retries: 0)
+      stub_http = Object.new
+
+      if error
+        total_attempts = retries + 1
+        attempt = 0
+        stub_http.define_singleton_method(:request) do |_req|
+          attempt += 1
+          raise error if attempt <= total_attempts
+        end
+      else
+        responses = []
+        responses << get_response if get_response
+        responses << put_response if put_response
+        stub_http.define_singleton_method(:request) do |_req|
+          responses.shift
+        end
+      end
+
+      stub_http
     end
 
     def success_response(json)
