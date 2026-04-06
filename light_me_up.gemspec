@@ -25,6 +25,4 @@ Gem::Specification.new do |spec|
   end
   spec.executables = ["light-me-up"]
   spec.require_paths = ["lib"]
-
-  spec.add_dependency "optimist", "~> 3.0"
 end

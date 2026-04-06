@@ -2,35 +2,36 @@
 # frozen_string_literal: true
 
 require_relative "../lib/light_me_up"
-require "optimist"
+require "optparse"
 
-brightness_help = format(
-  "Set the brightness (%<min>d to %<max>d)",
-  min: LightMeUp::Light.min_brightness,
-  max: LightMeUp::Light.max_brightness
-)
-temperature_help = format(
-  "Set the temperature (%<min>d to %<max>d)",
-  min: LightMeUp::Light.min_temperature,
-  max: LightMeUp::Light.max_temperature
-)
+options = {}
 
-options = Optimist.options do
-  banner "Usage: #{$PROGRAM_NAME} [options]"
-  version "light-me-up #{LightMeUp::VERSION}"
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} [options]"
 
-  opt :toggle, "Toggle whether the lights are on or off", short: "T"
-  opt :on, "Turn the light on"
-  opt :off, "Turn the light off", short: "O"
-  opt :ip_address, "Specify the IP address", type: :string, default: ENV.fetch("ELGATO_IP_ADDRESS", nil)
-  opt :defaults, "Set to default values"
-  opt :brightness, brightness_help, type: :integer
-  opt :temperature, temperature_help, type: :integer
-  opt :version, "Print version number and exit"
+  opts.on("-T", "--toggle", "Toggle whether the lights are on or off") { options[:toggle] = true }
+  opts.on("--on", "Turn the light on") { options[:on] = true }
+  opts.on("-O", "--off", "Turn the light off") { options[:on] = false }
+  opts.on("--ip-address ADDR", "Specify the IP address") { |addr| options[:ip_address] = addr }
+  opts.on("--defaults", "Set to default values") { options[:defaults] = true }
+  opts.on("--brightness N", Integer,
+          "Set the brightness (#{LightMeUp::Light.min_brightness} to #{LightMeUp::Light.max_brightness})") do |n|
+    options[:brightness] = n
+  end
+  opts.on("--temperature N", Integer,
+          "Set the temperature (#{LightMeUp::Light.min_temperature} to #{LightMeUp::Light.max_temperature})") do |n|
+    options[:temperature] = n
+  end
+  opts.on("--version", "Print version number and exit") do
+    puts "light-me-up #{LightMeUp::VERSION}"
+    exit
+  end
 end
 
-options = options.select { |_k, v| v }
-options[:on] = false if options.delete(:off)
+parser.parse!
+
+options[:ip_address] ||= ENV.fetch("ELGATO_IP_ADDRESS", nil)
+
 if options.delete(:defaults)
   options = {
     brightness: ENV.fetch("ELGATO_DEFAULT_BRIGHTNESS").to_i,
@@ -43,11 +44,11 @@ api_client = LightMeUp::ApiClient.new(ip_address: options[:ip_address])
 begin
   LightMeUp::SettingsUpdate.new(api_client, options).perform
 rescue LightMeUp::SettingsUpdate::ToggleIncompatible => e
-  Optimist.die :toggle, e.message
+  abort "Error: --toggle #{e.message}"
 rescue LightMeUp::SettingsUpdate::InvalidOptions => e
   warn e.message
-  Optimist.educate
-rescue LightMeUp::Error => e
-  warn e.message
+  warn parser
   exit 1
+rescue LightMeUp::Error => e
+  abort e.message
 end
