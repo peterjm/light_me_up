@@ -33,8 +33,8 @@ options = options.select { |_k, v| v }
 options[:on] = false if options.delete(:off)
 if options.delete(:defaults)
   options = {
-    brightness: ENV["ELGATO_DEFAULT_BRIGHTNESS"].to_i,
-    temperature: ENV["ELGATO_DEFAULT_TEMPERATURE"].to_i,
+    brightness: ENV.fetch("ELGATO_DEFAULT_BRIGHTNESS").to_i,
+    temperature: ENV.fetch("ELGATO_DEFAULT_TEMPERATURE").to_i,
   }.merge(options)
 end
 
