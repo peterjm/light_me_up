@@ -11,6 +11,7 @@ module LightMeUp
     READ_TIMEOUT = 2 # seconds
     MAX_RETRIES = 2
 
+    # Elgato API uses 143 (warm, 7000K) to 344 (cool, 2900K) for color temperature
     TEMPERATURE_RANGE = (143..344).freeze
 
     def initialize(ip_address:, retries: MAX_RETRIES, port: DEFAULT_PORT)
@@ -27,7 +28,7 @@ module LightMeUp
     end
 
     def toggle(brightness: nil, temperature: nil)
-      with_connection do |_http|
+      with_connection do
         current_status = status
 
         if current_status.on
@@ -133,9 +134,13 @@ module LightMeUp
 
       case response
       when Net::HTTPSuccess
-        JSON.parse(response.body)
+        begin
+          JSON.parse(response.body)
+        rescue JSON::ParserError
+          raise Error, "Unexpected response from light: #{response.body}"
+        end
       else
-        raise Error, response.body
+        raise Error, "Request failed (#{response.code}): #{response.body}"
       end
     end
 
