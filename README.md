@@ -1,28 +1,56 @@
 # LightMeUp
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/light_me_up`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A command-line tool for controlling [Elgato Key Lights](https://www.elgato.com/us/en/p/key-light) from your terminal.
 
 ## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'light_me_up'
-```
-
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
 
     $ gem install light_me_up
 
 ## Usage
 
-TODO: Write usage instructions here
+```
+light-me-up [options]
+```
+
+### Options
+
+| Option | Description |
+|---|---|
+| `--on` | Turn the light on |
+| `--off`, `-O` | Turn the light off |
+| `--toggle`, `-T` | Toggle the light on or off |
+| `--brightness N` | Set brightness (0 to 100) |
+| `--temperature N` | Set color temperature (0 to 100) |
+| `--defaults` | Set brightness and temperature to default values |
+| `--ip-address ADDR` | Specify the light's IP address |
+| `--version` | Print version number and exit |
+
+### Examples
+
+```bash
+# Turn the light on
+light-me-up --on
+
+# Turn the light off
+light-me-up --off
+
+# Set brightness and temperature
+light-me-up --on --brightness 75 --temperature 50
+
+# Toggle the light on or off
+light-me-up --toggle
+
+# Use default brightness and temperature
+light-me-up --on --defaults
+```
+
+### Environment Variables
+
+| Variable | Description |
+|---|---|
+| `ELGATO_IP_ADDRESS` | Default IP address of the light (used when `--ip-address` is not provided) |
+| `ELGATO_DEFAULT_BRIGHTNESS` | Default brightness value for `--defaults` |
+| `ELGATO_DEFAULT_TEMPERATURE` | Default temperature value for `--defaults` |
 
 ## Development
 
@@ -37,7 +65,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/peterj
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the LightMeUp project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/peterjm/light_me_up/blob/master/CODE_OF_CONDUCT.md).
