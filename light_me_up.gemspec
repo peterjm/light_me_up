@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
     end
   end
   spec.executables = ["light-me-up"]
-  spec.test_files = spec.files.grep(%r{\Atest/})
   spec.require_paths = ["lib"]
 
   spec.add_dependency "optimist", "~> 3.0"
